@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuroscience Learning App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F5F4F0;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { motion, AnimatePresence } = window.Motion;
+
+        const Icon = ({ name, size = 18, className = "" }) => {
+            return (
+                <i
+                    data-lucide={name}
+                    style={{ width: size, height: size }}
+                    className={className}
+                ></i>
+            );
+        };
+
+        function App() {
+            const [section, setSection] = useState(0);
+            const [dopamine, setDopamine] = useState(30);
+            const [receptors, setReceptors] = useState(6);
+            const [quizResult, setQuizResult] = useState(null);
+            const [isStimulantPresent, setIsStimulantPresent] = useState(false);
+
+            useEffect(() => {
+                lucide.createIcons();
+            }, [section, quizResult]);
+
+            const sections = [
+                { title: 'Overview', icon: 'info' },
+                { title: 'Normal Synapse', icon: 'activity' },
+                { title: 'The Disruption', icon: 'zap' },
+                { title: 'Brain Adaptation', icon: 'brain' },
+                { title: 'The Recovery Gap', icon: 'refresh-ccw' }
+            ];
+
+            const content = [
+                {
+                    title: "Stage 1: Crossing the Barrier",
+                    text: "The brain is protected by a 'Blood-Brain Barrier' that filters out harmful substances. However, some synthetic molecules are small enough to pass through. Once inside, they interfere with the brain's natural communication system by mimicking the shape of neurotransmitters.",
+                    dopamine: 30,
+                    receptors: 6,
+                    meth: false,
+                    quiz: {
+                        question: "How do synthetic stimulants initially bypass the brain's protective filters?",
+                        options: [
+                            { text: "They physically break the barrier.", value: "wrong" },
+                            { text: "They are small enough to pass through the filter.", value: "correct" }
+                        ],
+                        feedback: "Correct! Their molecular size allows them to slip through the blood-brain barrier meant to protect your central nervous system."
+                    }
+                },
+                {
+                    title: "Stage 2: Healthy Brain Function",
+                    text: "In a healthy brain, dopamine is released into the synapse to signal reward (like when you finish a hard task). Transporters then 'reuptake' or vacuum up the leftover dopamine so the signal stops, maintaining a healthy balance (homeostasis).",
+                    dopamine: 35,
+                    receptors: 6,
+                    meth: false,
+                    quiz: {
+                        question: "What is the primary role of 'transporters' in a healthy synapse?",
+                        options: [
+                            { text: "To recycle neurotransmitters.", value: "correct" },
+                            { text: "To create more receptors.", value: "wrong" }
+                        ],
+                        feedback: "Correct! Transporters act like a vacuum, recycling dopamine to keep levels balanced and prevent overstimulation."
+                    }
+                },
+                {
+                    title: "Stage 3: Chemical Overload",
+                    text: "Certain substances disrupt this balance by forcing the sender cell to dump all its stored dopamine at once while simultaneously blocking the 'vacuum' (transporters). This creates a toxic surge of chemicals that the brain isn't designed to handle.",
+                    dopamine: 100,
+                    receptors: 6,
+                    meth: true,
+                    quiz: {
+                        question: "What happens to the synaptic balance during a chemical disruption?",
+                        options: [
+                            { text: "Dopamine levels drop instantly.", value: "wrong" },
+                            { text: "Dopamine floods the synapse and reuptake is blocked.", value: "correct" }
+                        ],
+                        feedback: "Exactly. The dual action of forcing release and blocking cleanup creates a massive, unhealthy chemical surge."
+                    }
+                },
+                {
+                    title: "Stage 4: Downregulation",
+                    text: "The brain is highly adaptive. To protect itself from a massive chemical overload, it reduces the number of receptors on the receiver cell. This is called 'downregulation.' It's like the brain is turning down the volume because the 'music' is too loud.",
+                    dopamine: 70,
+                    receptors: 2,
+                    meth: true,
+                    quiz: {
+                        question: "Why does the brain remove its own receptors (downregulation)?",
+                        options: [
+                            { text: "To protect itself from overstimulation.", value: "correct" },
+                            { text: "To make the signal stronger.", value: "wrong" }
+                        ],
+                        feedback: "Correct. Downregulation is a defense mechanism. The brain attempts to restore balance by becoming less sensitive."
+                    }
+                },
+                {
+                    title: "Stage 5: The Recovery Gap",
+                    text: "When the external substance is removed, the brain is left in a state of low dopamine and very few receptors. Because the 'volume' is still turned down, normal healthy activities no longer feel rewarding, leading to a long period of low energy and mood.",
+                    dopamine: 10,
+                    receptors: 2,
+                    meth: false,
+                    quiz: {
+                        question: "Why do healthy activities feel less rewarding during the recovery phase?",
+                        options: [
+                            { text: "There aren't enough receptors left to detect natural dopamine.", value: "correct" },
+                            { text: "Natural dopamine has been permanently deleted.", value: "wrong" }
+                        ],
+                        feedback: "Correct! The lack of receptors means the brain can't 'hear' the signal from natural, healthy sources of joy."
+                    }
+                }
+            ];
+
+            useEffect(() => {
+                const current = content[section];
+                setDopamine(current.dopamine);
+                setReceptors(current.receptors);
+                setIsStimulantPresent(current.meth);
+                setQuizResult(null);
+            }, [section]);
+
+            const isOverload = section === 2;
+            const isRecovery = section === 4;
+            const particleSpeed = isOverload ? 0.8 : isRecovery ? 6 : 2.5;
+
+            return (
+                <div className="min-h-screen bg-[#F5F4F0] text-slate-700 p-4 md:p-8">
+                    <div className="max-w-6xl mx-auto space-y-6">
+
+                        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-indigo-100 pb-6">
+                            <div>
+                                <h1 className="text-3xl font-bold text-indigo-900 tracking-tight">
+                                    Brain Health Lab
+                                </h1>
+                                <p className="text-slate-400 font-medium text-sm">Visualizing Synaptic Balance & Restoration</p>
+                            </div>
+                            <div className="flex bg-[#FAF9F6] p-1.5 rounded-2xl border border-indigo-100 shadow-sm overflow-x-auto">
+                                {sections.map((s, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => setSection(i)}
+                                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all text-xs font-bold uppercase tracking-wide whitespace-nowrap ${
+                                            section === i
+                                                ? 'bg-indigo-500 text-white shadow-md shadow-indigo-200'
+                                                : 'text-indigo-400 hover:text-indigo-600 hover:bg-indigo-100'
+                                        }`}
+                                    >
+                                        <Icon name={s.icon} size={14} /> {s.title}
+                                    </button>
+                                ))}
+                            </div>
+                        </header>
+
+                        <main className="grid lg:grid-cols-12 gap-6">
+
+                            <div className="lg:col-span-4 space-y-6">
+                                <section className="bg-[#FAF9F6] border border-indigo-100 p-7 rounded-[2rem] shadow-sm">
+                                    <h2 className="text-2xl font-bold mb-4 text-indigo-950 flex items-center gap-3">
+                                        <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-indigo-100 text-indigo-600 text-sm">
+                                            {section + 1}
+                                        </span>
+                                        {content[section].title}
+                                    </h2>
+                                    <p className="text-slate-600 leading-relaxed text-base mb-6">
+                                        {content[section].text}
+                                    </p>
+
+                                    <div className="space-y-4 pt-4 border-t border-indigo-100">
+                                        <div className="flex justify-between items-end">
+                                            <label className="text-[10px] font-black text-indigo-300 uppercase tracking-[0.15em]">Dopamine Activity</label>
+                                            <span className={`text-xl font-bold ${dopamine > 80 ? 'text-rose-400 animate-pulse' : 'text-indigo-400'}`}>
+                                                {dopamine}%
+                                            </span>
+                                        </div>
+                                        <div className="h-4 bg-indigo-50/50 rounded-full overflow-hidden p-1 border border-indigo-100">
+                                            <motion.div
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `${dopamine}%` }}
+                                                className={`h-full rounded-full transition-colors duration-700 ${dopamine > 80 ? 'bg-rose-300 shadow-[0_0_10px_rgba(244,63,94,0.3)]' : isRecovery ? 'bg-slate-300' : 'bg-indigo-300'}`}
+                                            />
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section className={`transition-all duration-700 p-6 rounded-[2rem] border ${isRecovery ? 'bg-slate-100 border-slate-200 shadow-inner' : 'bg-gradient-to-br from-indigo-50/50 to-[#FAF9F6] border-indigo-100 shadow-sm'}`}>
+                                    <h3 className={`text-[10px] font-black uppercase tracking-widest mb-3 flex items-center gap-2 ${isRecovery ? 'text-slate-400' : 'text-indigo-400'}`}>
+                                        <Icon name="brain" size={16} /> Biology Note
+                                    </h3>
+                                    <p className={`text-sm italic leading-snug transition-colors ${isRecovery ? 'text-slate-400' : 'text-slate-500'}`}>
+                                        {section === 3
+                                            ? "Downregulation is the brain's way of seeking 'Homeostasis', keeping your internal systems stable and safe."
+                                            : isRecovery
+                                            ? "The recovery gap occurs because cells need time to rebuild receptors and chemical stores."
+                                            : "Tiny chemical signals travel between your brain cells constantly to help you learn and feel."}
+                                    </p>
+                                </section>
+                            </div>
+
+                            <div className="lg:col-span-8 flex flex-col gap-6">
+                                <div className={`relative flex-grow rounded-[3rem] border transition-all duration-1000 overflow-hidden min-h-[380px] flex items-center justify-center p-8 shadow-sm ${isRecovery ? 'bg-[#EBEAE6] border-slate-200 grayscale-[0.3]' : 'bg-[#FAF9F6] border-indigo-100'}`}>
+
+                                    <div className={`absolute inset-0 opacity-20 transition-all duration-1000 ${isOverload ? 'bg-rose-300' : isRecovery ? 'bg-slate-400' : 'bg-indigo-100'}`} />
+
+                                    <div className="relative w-full max-w-2xl aspect-video flex items-center justify-between">
+
+                                        <motion.div
+                                            animate={isOverload ? { x: [0, -2, 2, 0], scale: [1, 1.02, 1] } : {}}
+                                            transition={{ repeat: Infinity, duration: 0.2 }}
+                                            className="relative z-10"
+                                        >
+                                            <div className={`w-28 h-44 bg-gradient-to-r transition-all duration-1000 rounded-r-[60px] border-y-2 border-r-2 flex flex-col justify-around py-4 pl-4 shadow-sm ${
+                                                isOverload ? 'from-rose-50 to-white border-rose-200' :
+                                                isRecovery ? 'from-slate-200 to-slate-100 border-slate-300' :
+                                                'from-indigo-50 to-white border-indigo-100'
+                                            }`}>
+                                                <motion.div
+                                                    animate={isOverload ? { opacity: [1, 0], scale: [1, 1.5] } : isRecovery ? { scale: 0.6, opacity: 0.5 } : {}}
+                                                    transition={isOverload ? { repeat: Infinity, duration: 0.5 } : {}}
+                                                    className="w-7 h-7 rounded-full bg-indigo-100 border border-indigo-200"
+                                                />
+                                                <motion.div
+                                                    animate={isRecovery ? { scale: 0.4, opacity: 0.3 } : {}}
+                                                    className="w-7 h-7 rounded-full bg-indigo-100 border border-indigo-200"
+                                                />
+                                            </div>
+                                            <div className="absolute -left-6 top-1/2 -translate-y-1/2 text-[9px] font-black text-indigo-300 uppercase -rotate-90 tracking-widest">Sender</div>
+                                        </motion.div>
+
+                                        <div className="flex-grow h-44 relative">
+                                            <AnimatePresence>
+                                                {[...Array(Math.max(3, Math.floor(dopamine / 5)))].map((_, i) => (
+                                                    <motion.div
+                                                        key={`${section}-da-${i}`}
+                                                        initial={{ x: 0, y: 80, opacity: 0 }}
+                                                        animate={{
+                                                            x: [0, 200],
+                                                            y: 80 + (Math.sin(i + section) * 60),
+                                                            opacity: [0, 1, 1, 0],
+                                                        }}
+                                                        transition={{
+                                                            duration: particleSpeed,
+                                                            repeat: Infinity,
+                                                            delay: i * (isOverload ? 0.05 : 0.3),
+                                                            ease: isOverload ? "easeInOut" : "linear"
+                                                        }}
+                                                        className={`absolute w-2.5 h-2.5 rounded-full shadow-sm ${
+                                                            isRecovery ? 'bg-slate-400' : 'bg-indigo-300 shadow-indigo-200'
+                                                        }`}
+                                                    />
+                                                ))}
+                                            </AnimatePresence>
+
+                                            {isStimulantPresent && [...Array(6)].map((_, i) => (
+                                                <motion.div
+                                                    key={`disruptor-${i}`}
+                                                    animate={{
+                                                        x: [20, 160, 20],
+                                                        y: [30 + (i*22), 100, 30 + (i*22)],
+                                                        rotate: [0, 180, 360],
+                                                        scale: isOverload ? [1, 1.2, 1] : 1
+                                                    }}
+                                                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: i * 0.4 }}
+                                                    className={`absolute w-5 h-5 border rounded-lg flex items-center justify-center text-[10px] font-black shadow-sm ${
+                                                        isOverload ? 'bg-rose-100 border-rose-300 text-rose-500' : 'bg-slate-100 border-slate-200 text-slate-400'
+                                                    }`}
+                                                >
+                                                    !
+                                                </motion.div>
+                                            ))}
+                                        </div>
+
+                                        <motion.div
+                                            animate={section >= 3 ? { scale: 0.85, x: 10 } : { scale: 1, x: 0 }}
+                                            transition={{ duration: 0.8 }}
+                                            className="relative z-10 flex flex-col items-start gap-4"
+                                        >
+                                            {[...Array(receptors)].map((_, i) => (
+                                                <motion.div
+                                                    key={i}
+                                                    layout
+                                                    className={`w-3.5 h-9 rounded-r-lg border shadow-sm transition-colors duration-1000 ${
+                                                        section >= 3 ? 'bg-slate-200 border-slate-300' : 'bg-teal-100 border-teal-200'
+                                                    }`}
+                                                />
+                                            ))}
+                                            <div className="absolute -right-6 top-1/2 -translate-y-1/2 text-[9px] font-black text-teal-300 uppercase rotate-90 tracking-widest">Receiver</div>
+                                        </motion.div>
+                                    </div>
+
+                                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-6 py-2.5 bg-white/80 backdrop-blur-sm border border-indigo-50 rounded-2xl flex items-center gap-5 shadow-sm">
+                                        <div className="flex items-center gap-2">
+                                            <div className={`w-2.5 h-2.5 rounded-full ${isRecovery ? 'bg-slate-400' : 'bg-indigo-300'}`} />
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Dopamine</span>
+                                        </div>
+                                        {isStimulantPresent && (
+                                            <div className="flex items-center gap-2 pl-5 border-l border-indigo-50">
+                                                <div className="w-2.5 h-2.5 rounded bg-rose-200" />
+                                                <span className="text-[10px] font-bold text-rose-400 uppercase tracking-wider underline decoration-rose-200 underline-offset-2">Overload</span>
+                                            </div>
+                                        )}
+                                        <div className="flex items-center gap-2 pl-5 border-l border-indigo-50">
+                                            <div className={`w-2.5 h-2.5 rounded-sm ${section >= 3 ? 'bg-slate-200' : 'bg-teal-100'}`} />
+                                            <span className="text-[10px] font-bold text-teal-400 uppercase tracking-wider">Receptors</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <section className={`transition-all duration-700 border p-8 rounded-[3rem] shadow-sm relative overflow-hidden ${isRecovery ? 'bg-slate-50 border-slate-200' : 'bg-[#FAF9F6] border-indigo-50'}`}>
+                                    <h3 className={`text-xl font-bold mb-6 flex items-center gap-3 ${isRecovery ? 'text-slate-500' : 'text-indigo-900'}`}>
+                                        <Icon name="check-circle-2" className={isRecovery ? 'text-slate-400' : 'text-indigo-400'} size={24} /> Lesson Checkpoint
+                                    </h3>
+
+                                    <div className="space-y-6">
+                                        <p className="text-slate-600 text-lg font-medium leading-relaxed">
+                                            {content[section].quiz.question}
+                                        </p>
+
+                                        <div className="grid md:grid-cols-2 gap-4">
+                                            {content[section].quiz.options.map((opt, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => setQuizResult(opt.value)}
+                                                    className={`p-6 rounded-3xl text-left transition-all border-2 flex items-center justify-between group active:scale-95 ${
+                                                        quizResult === opt.value && opt.value === 'correct'
+                                                        ? 'bg-teal-50 border-teal-400 shadow-sm'
+                                                        : quizResult === opt.value && opt.value === 'wrong'
+                                                        ? 'bg-rose-50 border-rose-300 shadow-sm'
+                                                        : isRecovery ? 'bg-white border-slate-100 hover:border-slate-300' : 'bg-white border-indigo-50 hover:border-indigo-200 shadow-sm'
+                                                    }`}
+                                                >
+                                                    <span className={`font-bold ${quizResult === opt.value && opt.value === 'correct' ? 'text-teal-700' : 'text-slate-700'}`}>
+                                                        {opt.text}
+                                                    </span>
+                                                    {quizResult === opt.value && (
+                                                        opt.value === 'correct'
+                                                        ? <Icon name="check-circle-2" size={24} className="text-teal-500" />
+                                                        : <Icon name="alert-circle" size={24} className="text-rose-400" />
+                                                    )}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        <AnimatePresence>
+                                            {quizResult && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, y: 10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    className={`p-5 rounded-2xl text-sm font-semibold tracking-tight ${
+                                                        quizResult === 'correct' ? 'text-teal-600 bg-teal-50/50' : 'text-rose-400 bg-rose-50/50'
+                                                    }`}
+                                                >
+                                                    {quizResult === 'correct'
+                                                        ? `✨ ${content[section].quiz.feedback}`
+                                                        : "Almost there! Take another look at the biological explanation on the left."}
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+                                </section>
+                            </div>
+                        </main>
+
+                        <footer className="text-center text-indigo-200 text-[10px] font-black uppercase tracking-[0.4em] py-10">
+                            Science Dashboard • Synaptic Harmony Module
+                        </footer>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
