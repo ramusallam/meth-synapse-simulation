@@ -10,12 +10,51 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Roboto+Mono:wght@400;500;700&family=Roboto+Serif:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #F5F4F0;
+        :root {
+            --bg:#F7F3EE; --white:#FFFFFF; --ink:#1C1917; --warm:#57534E; --warm-muted:#7C6F5A; --faint:#A0937B;
+            --indigo:#6366F1; --indigo-2:#818CF8; --indigo-hover:#4F46E5;
+            --indigo-soft:rgba(99,102,241,0.09); --indigo-line:rgba(99,102,241,0.30);
+            --line:#E8E0D2; --line-soft:#F0EBE3;
+            --font-sans:'Inter',system-ui,-apple-system,sans-serif;
+            --font-serif:'Roboto Serif',Georgia,Cambria,serif;
+            --font-mono:'Roboto Mono',monospace;
+            --sh-sm:0 1px 2px rgba(17,17,17,0.05),0 2px 6px rgba(17,17,17,0.08);
+            --sh-md:0 4px 12px rgba(17,17,17,0.06),0 2px 4px rgba(17,17,17,0.04);
+            --sh-lg:0 16px 40px rgba(17,17,17,0.10),0 4px 12px rgba(17,17,17,0.06);
         }
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
+        }
+        .serif { font-family: var(--font-serif); }
+        .mono { font-family: var(--font-mono); }
+        .eyebrow {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--indigo);
+        }
+        .app-hero {
+            background: linear-gradient(150deg,#4F46E5 0%,#6366F1 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .app-hero::before {
+            content:''; position:absolute; inset:0;
+            background: radial-gradient(circle,rgba(255,255,255,0.06) 1px,transparent 2px);
+            background-size: 40px 40px; pointer-events:none;
+        }
+        .lift { transition: transform .2s, box-shadow .2s; }
+        .lift:hover { transform: translateY(-5px); box-shadow: var(--sh-lg); }
+        @keyframes fadeUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+        .fade-up { animation: fadeUp .35s ease-out; }
+        .tab-num { font-variant-numeric: tabular-nums; }
     </style>
 </head>
 <body>
@@ -145,26 +184,31 @@
             const particleSpeed = isOverload ? 0.8 : isRecovery ? 6 : 2.5;
 
             return (
-                <div className="min-h-screen bg-[#F5F4F0] text-slate-700 p-4 md:p-8">
-                    <div className="max-w-6xl mx-auto space-y-6">
+                <div className="min-h-screen text-stone-900" style={{ backgroundColor: '#F7F3EE' }}>
+                    <div className="app-hero px-4 md:px-8 pt-10 pb-24 text-center">
+                        <div className="relative max-w-6xl mx-auto">
+                            <div className="eyebrow" style={{ color: 'rgba(255,255,255,0.9)', letterSpacing: '0.34em' }}>Neuroscience Learning Lab</div>
+                            <h1 className="serif text-white font-bold mt-2 mb-2" style={{ fontSize: '2.5rem', letterSpacing: '-0.5px', lineHeight: 1.08 }}>
+                                Brain Health Lab
+                            </h1>
+                            <p className="text-white/90 text-base max-w-xl mx-auto">Visualizing Synaptic Balance and Restoration</p>
+                        </div>
+                    </div>
 
-                        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-indigo-100 pb-6">
-                            <div>
-                                <h1 className="text-3xl font-bold text-indigo-900 tracking-tight">
-                                    Brain Health Lab
-                                </h1>
-                                <p className="text-slate-400 font-medium text-sm">Visualizing Synaptic Balance & Restoration</p>
-                            </div>
-                            <div className="flex bg-[#FAF9F6] p-1.5 rounded-2xl border border-indigo-100 shadow-sm overflow-x-auto">
+                    <div className="max-w-6xl mx-auto px-4 md:px-8 pb-8 space-y-6" style={{ marginTop: '-56px', position: 'relative', zIndex: 2 }}>
+
+                        <header className="flex justify-center">
+                            <div className="flex bg-white p-1.5 rounded-2xl shadow-md overflow-x-auto" style={{ border: '1px solid var(--line)' }}>
                                 {sections.map((s, i) => (
                                     <button
                                         key={i}
                                         onClick={() => setSection(i)}
-                                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all text-xs font-bold uppercase tracking-wide whitespace-nowrap ${
+                                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all text-xs font-bold uppercase whitespace-nowrap ${
                                             section === i
                                                 ? 'bg-indigo-500 text-white shadow-md shadow-indigo-200'
-                                                : 'text-indigo-400 hover:text-indigo-600 hover:bg-indigo-100'
+                                                : 'hover:bg-indigo-50'
                                         }`}
+                                        style={{ letterSpacing: '0.06em', fontFamily: 'var(--font-mono)', color: section === i ? '#fff' : 'var(--warm-muted)' }}
                                     >
                                         <Icon name={s.icon} size={14} /> {s.title}
                                     </button>
@@ -175,39 +219,40 @@
                         <main className="grid lg:grid-cols-12 gap-6">
 
                             <div className="lg:col-span-4 space-y-6">
-                                <section className="bg-[#FAF9F6] border border-indigo-100 p-7 rounded-[2rem] shadow-sm">
-                                    <h2 className="text-2xl font-bold mb-4 text-indigo-950 flex items-center gap-3">
-                                        <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-indigo-100 text-indigo-600 text-sm">
+                                <section className="bg-white p-7 rounded-2xl lift fade-up" style={{ border: '1px solid var(--line)', boxShadow: 'var(--sh-md)' }}>
+                                    <h2 className="serif text-2xl font-bold mb-4 flex items-center gap-3" style={{ color: 'var(--ink)' }}>
+                                        <span className="mono flex items-center justify-center w-8 h-8 rounded-xl text-sm font-bold" style={{ background: 'var(--indigo-soft)', color: 'var(--indigo)' }}>
                                             {section + 1}
                                         </span>
                                         {content[section].title}
                                     </h2>
-                                    <p className="text-slate-600 leading-relaxed text-base mb-6">
+                                    <p className="leading-relaxed text-base mb-6" style={{ color: 'var(--warm)' }}>
                                         {content[section].text}
                                     </p>
 
-                                    <div className="space-y-4 pt-4 border-t border-indigo-100">
+                                    <div className="space-y-4 pt-4" style={{ borderTop: '1px solid var(--line)' }}>
                                         <div className="flex justify-between items-end">
-                                            <label className="text-[10px] font-black text-indigo-300 uppercase tracking-[0.15em]">Dopamine Activity</label>
-                                            <span className={`text-xl font-bold ${dopamine > 80 ? 'text-rose-400 animate-pulse' : 'text-indigo-400'}`}>
+                                            <label className="eyebrow">Dopamine Activity</label>
+                                            <span className={`tab-num text-xl font-bold ${dopamine > 80 ? 'animate-pulse' : ''}`} style={{ color: dopamine > 80 ? 'var(--red, #EF4444)' : 'var(--indigo)' }}>
                                                 {dopamine}%
                                             </span>
                                         </div>
-                                        <div className="h-4 bg-indigo-50/50 rounded-full overflow-hidden p-1 border border-indigo-100">
+                                        <div className="h-4 rounded-full overflow-hidden p-1" style={{ background: 'var(--line-soft)' }}>
                                             <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${dopamine}%` }}
-                                                className={`h-full rounded-full transition-colors duration-700 ${dopamine > 80 ? 'bg-rose-300 shadow-[0_0_10px_rgba(244,63,94,0.3)]' : isRecovery ? 'bg-slate-300' : 'bg-indigo-300'}`}
+                                                className={`h-full rounded-full transition-colors duration-700`}
+                                                style={{ background: dopamine > 80 ? '#EF4444' : isRecovery ? '#D6CEBF' : 'linear-gradient(90deg,var(--indigo),var(--indigo-2))' }}
                                             />
                                         </div>
                                     </div>
                                 </section>
 
-                                <section className={`transition-all duration-700 p-6 rounded-[2rem] border ${isRecovery ? 'bg-slate-100 border-slate-200 shadow-inner' : 'bg-gradient-to-br from-indigo-50/50 to-[#FAF9F6] border-indigo-100 shadow-sm'}`}>
-                                    <h3 className={`text-[10px] font-black uppercase tracking-widest mb-3 flex items-center gap-2 ${isRecovery ? 'text-slate-400' : 'text-indigo-400'}`}>
+                                <section className="transition-all duration-700 p-6 rounded-2xl fade-up" style={{ border: '1px solid var(--line)', background: isRecovery ? '#F0EBE3' : 'var(--white)', boxShadow: 'var(--sh-sm)' }}>
+                                    <h3 className="eyebrow mb-3 flex items-center gap-2" style={{ color: isRecovery ? 'var(--warm-muted)' : 'var(--indigo)' }}>
                                         <Icon name="brain" size={16} /> Biology Note
                                     </h3>
-                                    <p className={`text-sm italic leading-snug transition-colors ${isRecovery ? 'text-slate-400' : 'text-slate-500'}`}>
+                                    <p className="text-sm italic leading-snug transition-colors" style={{ color: isRecovery ? 'var(--faint)' : 'var(--warm)' }}>
                                         {section === 3
                                             ? "Downregulation is the brain's way of seeking 'Homeostasis', keeping your internal systems stable and safe."
                                             : isRecovery
@@ -218,7 +263,7 @@
                             </div>
 
                             <div className="lg:col-span-8 flex flex-col gap-6">
-                                <div className={`relative flex-grow rounded-[3rem] border transition-all duration-1000 overflow-hidden min-h-[380px] flex items-center justify-center p-8 shadow-sm ${isRecovery ? 'bg-[#EBEAE6] border-slate-200 grayscale-[0.3]' : 'bg-[#FAF9F6] border-indigo-100'}`}>
+                                <div className={`relative flex-grow rounded-2xl border transition-all duration-1000 overflow-hidden min-h-[380px] flex items-center justify-center p-8 ${isRecovery ? 'grayscale-[0.3]' : ''}`} style={{ borderColor: 'var(--line)', background: isRecovery ? '#F0EBE3' : 'var(--white)', boxShadow: 'var(--sh-md)' }}>
 
                                     <div className={`absolute inset-0 opacity-20 transition-all duration-1000 ${isOverload ? 'bg-rose-300' : isRecovery ? 'bg-slate-400' : 'bg-indigo-100'}`} />
 
@@ -244,7 +289,7 @@
                                                     className="w-7 h-7 rounded-full bg-indigo-100 border border-indigo-200"
                                                 />
                                             </div>
-                                            <div className="absolute -left-6 top-1/2 -translate-y-1/2 text-[9px] font-black text-indigo-300 uppercase -rotate-90 tracking-widest">Sender</div>
+                                            <div className="absolute -left-6 top-1/2 -translate-y-1/2 text-[9px] font-black uppercase -rotate-90" style={{ color: 'var(--indigo)', letterSpacing: '0.25em', fontFamily: 'var(--font-mono)' }}>Sender</div>
                                         </motion.div>
 
                                         <div className="flex-grow h-44 relative">
@@ -300,39 +345,39 @@
                                                     key={i}
                                                     layout
                                                     className={`w-3.5 h-9 rounded-r-lg border shadow-sm transition-colors duration-1000 ${
-                                                        section >= 3 ? 'bg-slate-200 border-slate-300' : 'bg-teal-100 border-teal-200'
+                                                        section >= 3 ? 'bg-stone-200 border-stone-300' : 'bg-emerald-100 border-emerald-200'
                                                     }`}
                                                 />
                                             ))}
-                                            <div className="absolute -right-6 top-1/2 -translate-y-1/2 text-[9px] font-black text-teal-300 uppercase rotate-90 tracking-widest">Receiver</div>
+                                            <div className="absolute -right-6 top-1/2 -translate-y-1/2 text-[9px] font-black uppercase rotate-90" style={{ color: '#10B981', letterSpacing: '0.25em', fontFamily: 'var(--font-mono)' }}>Receiver</div>
                                         </motion.div>
                                     </div>
 
-                                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-6 py-2.5 bg-white/80 backdrop-blur-sm border border-indigo-50 rounded-2xl flex items-center gap-5 shadow-sm">
+                                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-6 py-2.5 bg-white/85 backdrop-blur-sm rounded-full flex items-center gap-5" style={{ border: '1px solid var(--line)', boxShadow: 'var(--sh-sm)' }}>
                                         <div className="flex items-center gap-2">
-                                            <div className={`w-2.5 h-2.5 rounded-full ${isRecovery ? 'bg-slate-400' : 'bg-indigo-300'}`} />
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Dopamine</span>
+                                            <div className={`w-2.5 h-2.5 rounded-full ${isRecovery ? 'bg-stone-400' : 'bg-indigo-400'}`} />
+                                            <span className="mono text-[10px] font-bold uppercase" style={{ color: 'var(--warm)', letterSpacing: '0.1em' }}>Dopamine</span>
                                         </div>
                                         {isStimulantPresent && (
-                                            <div className="flex items-center gap-2 pl-5 border-l border-indigo-50">
-                                                <div className="w-2.5 h-2.5 rounded bg-rose-200" />
-                                                <span className="text-[10px] font-bold text-rose-400 uppercase tracking-wider underline decoration-rose-200 underline-offset-2">Overload</span>
+                                            <div className="flex items-center gap-2 pl-5" style={{ borderLeft: '1px solid var(--line)' }}>
+                                                <div className="w-2.5 h-2.5 rounded bg-rose-300" />
+                                                <span className="mono text-[10px] font-bold uppercase text-rose-500" style={{ letterSpacing: '0.1em' }}>Overload</span>
                                             </div>
                                         )}
-                                        <div className="flex items-center gap-2 pl-5 border-l border-indigo-50">
-                                            <div className={`w-2.5 h-2.5 rounded-sm ${section >= 3 ? 'bg-slate-200' : 'bg-teal-100'}`} />
-                                            <span className="text-[10px] font-bold text-teal-400 uppercase tracking-wider">Receptors</span>
+                                        <div className="flex items-center gap-2 pl-5" style={{ borderLeft: '1px solid var(--line)' }}>
+                                            <div className={`w-2.5 h-2.5 rounded-sm ${section >= 3 ? 'bg-stone-300' : 'bg-emerald-200'}`} />
+                                            <span className="mono text-[10px] font-bold uppercase" style={{ color: 'var(--warm)', letterSpacing: '0.1em' }}>Receptors</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <section className={`transition-all duration-700 border p-8 rounded-[3rem] shadow-sm relative overflow-hidden ${isRecovery ? 'bg-slate-50 border-slate-200' : 'bg-[#FAF9F6] border-indigo-50'}`}>
-                                    <h3 className={`text-xl font-bold mb-6 flex items-center gap-3 ${isRecovery ? 'text-slate-500' : 'text-indigo-900'}`}>
-                                        <Icon name="check-circle-2" className={isRecovery ? 'text-slate-400' : 'text-indigo-400'} size={24} /> Lesson Checkpoint
+                                <section className="transition-all duration-700 p-8 rounded-2xl relative overflow-hidden fade-up" style={{ border: '1px solid var(--line)', background: isRecovery ? '#F0EBE3' : 'var(--white)', boxShadow: 'var(--sh-md)' }}>
+                                    <h3 className="serif text-xl font-bold mb-6 flex items-center gap-3" style={{ color: isRecovery ? 'var(--warm)' : 'var(--ink)' }}>
+                                        <Icon name="check-circle-2" size={24} className="" style={{ color: isRecovery ? 'var(--warm-muted)' : 'var(--indigo)' }} /> Lesson Checkpoint
                                     </h3>
 
                                     <div className="space-y-6">
-                                        <p className="text-slate-600 text-lg font-medium leading-relaxed">
+                                        <p className="text-lg font-medium leading-relaxed" style={{ color: 'var(--warm)' }}>
                                             {content[section].quiz.question}
                                         </p>
 
@@ -341,20 +386,21 @@
                                                 <button
                                                     key={idx}
                                                     onClick={() => setQuizResult(opt.value)}
-                                                    className={`p-6 rounded-3xl text-left transition-all border-2 flex items-center justify-between group active:scale-95 ${
+                                                    className={`p-6 rounded-xl text-left transition-all border-2 flex items-center justify-between group active:scale-95 ${
                                                         quizResult === opt.value && opt.value === 'correct'
-                                                        ? 'bg-teal-50 border-teal-400 shadow-sm'
+                                                        ? 'bg-emerald-50 border-emerald-400 shadow-sm'
                                                         : quizResult === opt.value && opt.value === 'wrong'
                                                         ? 'bg-rose-50 border-rose-300 shadow-sm'
-                                                        : isRecovery ? 'bg-white border-slate-100 hover:border-slate-300' : 'bg-white border-indigo-50 hover:border-indigo-200 shadow-sm'
+                                                        : 'bg-white hover:border-indigo-300 shadow-sm'
                                                     }`}
+                                                    style={ (quizResult === opt.value) ? {} : { borderColor: 'var(--line)' } }
                                                 >
-                                                    <span className={`font-bold ${quizResult === opt.value && opt.value === 'correct' ? 'text-teal-700' : 'text-slate-700'}`}>
+                                                    <span className="font-bold" style={{ color: quizResult === opt.value && opt.value === 'correct' ? '#047857' : 'var(--ink)' }}>
                                                         {opt.text}
                                                     </span>
                                                     {quizResult === opt.value && (
                                                         opt.value === 'correct'
-                                                        ? <Icon name="check-circle-2" size={24} className="text-teal-500" />
+                                                        ? <Icon name="check-circle-2" size={24} className="text-emerald-500" />
                                                         : <Icon name="alert-circle" size={24} className="text-rose-400" />
                                                     )}
                                                 </button>
@@ -366,13 +412,13 @@
                                                 <motion.div
                                                     initial={{ opacity: 0, y: 10 }}
                                                     animate={{ opacity: 1, y: 0 }}
-                                                    className={`p-5 rounded-2xl text-sm font-semibold tracking-tight ${
-                                                        quizResult === 'correct' ? 'text-teal-600 bg-teal-50/50' : 'text-rose-400 bg-rose-50/50'
-                                                    }`}
+                                                    className="p-5 rounded-2xl text-sm font-semibold tracking-tight flex items-start gap-2"
+                                                    style={ quizResult === 'correct' ? { color: '#047857', background: 'rgba(16,185,129,0.08)' } : { color: '#e11d48', background: 'rgba(244,63,94,0.06)' } }
                                                 >
-                                                    {quizResult === 'correct'
-                                                        ? `✨ ${content[section].quiz.feedback}`
-                                                        : "Almost there! Take another look at the biological explanation on the left."}
+                                                    {quizResult === 'correct' && <Icon name="sparkles" size={16} className="mt-0.5 shrink-0" />}
+                                                    <span>{quizResult === 'correct'
+                                                        ? content[section].quiz.feedback
+                                                        : "Almost there! Take another look at the biological explanation on the left."}</span>
                                                 </motion.div>
                                             )}
                                         </AnimatePresence>
@@ -381,8 +427,8 @@
                             </div>
                         </main>
 
-                        <footer className="text-center text-indigo-200 text-[10px] font-black uppercase tracking-[0.4em] py-10">
-                            Science Dashboard • Synaptic Harmony Module
+                        <footer className="mono text-center text-[10px] font-black uppercase py-10" style={{ color: 'var(--faint)', letterSpacing: '0.3em' }}>
+                            Science Dashboard&nbsp;&nbsp;&nbsp;Synaptic Harmony Module
                         </footer>
                     </div>
                 </div>
